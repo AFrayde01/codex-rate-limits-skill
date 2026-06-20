@@ -99,20 +99,8 @@ Secondary Window
   Remaining: 4d 16h 47m 41s
 ```
 
-## Privacy And Security
-
-Do not commit or share local Codex secrets or state files. This repository should only contain the skill files.
-
-Do not share:
-
-- `~/.codex/auth.json`
-- `~/.codex/.codex-global-state.json`
-- `/Users/<user>/Library/Application Support/Parall/Codex/.codex/auth.json`
-- `/Users/<user>/Library/Application Support/Parall/Codex/.codex/.codex-global-state.json`
-
 ## Notes
 
 - Standard rate-limit windows come from the latest local Codex session snapshot.
 - Exact coupon expirations come from the live reset-credit endpoint when reachable.
 - On some Python installs, HTTPS certificate trust may require `certifi`, which the script uses automatically when available.
-- The repository only shares the skill code and instructions, never your personal Codex auth or local state.
