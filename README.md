@@ -70,6 +70,35 @@ python3 codex-rate-limit-reset/scripts/read_rate_limits.py --session-file <absol
 python3 codex-rate-limit-reset/scripts/read_rate_limits.py --auth "/Users/<user>/Library/Application Support/Parall/Codex/.codex/auth.json"
 ```
 
+## Example Output
+
+```text
+Reset Coupons
+  Source: Live Codex reset-credit endpoint
+  Available: 2
+  Next Expires: 2026-07-11T20:38:07-06:00
+  Time Left: 21d 22h 1m 59s
+  #1 available expires 2026-07-11T20:38:07-06:00 (21d 22h 1m 59s)
+    Granted: 2026-06-11T20:38:07-06:00
+  #2 available expires 2026-07-17T18:42:45-06:00 (27d 20h 6m 37s)
+    Granted: 2026-06-17T18:42:45-06:00
+
+Source: /Users/example/Library/Application Support/Parall/Codex/.codex/sessions/.../rollout-....jsonl
+Plan: prolite
+
+Primary Window
+  Used: 8.0%
+  Length: 300 minutes
+  Resets: 2026-06-20T03:09:17-06:00
+  Remaining: 4h 33m 9s
+
+Secondary Window
+  Used: 9.0%
+  Length: 10080 minutes
+  Resets: 2026-06-24T15:23:49-06:00
+  Remaining: 4d 16h 47m 41s
+```
+
 ## Privacy And Security
 
 Do not commit or share local Codex secrets or state files. This repository should only contain the skill files.
