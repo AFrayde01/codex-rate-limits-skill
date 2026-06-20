@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codex Rate Limits"
+  short_description: "Check Codex reset windows, usage, and coupons"
+  default_prompt: "Use $codex-rate-limit-reset to tell me when my Codex rate limits reset, how much of each window I have used, and whether any reset coupons are available or expiring soon."
