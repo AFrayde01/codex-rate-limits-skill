@@ -1,0 +1,10 @@
+{
+  "electron-persisted-atom-state": {
+    "rate-limit-reset-home-announcement-dismissal-by-account-id": {
+      "acct_123": {
+        "availableCount": 2,
+        "dismissedAtMs": 1781744188404
+      }
+    }
+  }
+}

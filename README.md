@@ -99,6 +99,29 @@ Secondary Window
   Remaining: 4d 16h 47m 41s
 ```
 
+## Testing
+
+Run the local test suite:
+
+```bash
+python3 -m pytest -q
+python3 -m py_compile codex-rate-limit-reset/scripts/read_rate_limits.py
+```
+
+The repository includes GitHub Actions CI in `.github/workflows/python-ci.yml`.
+It runs only secret-free checks:
+
+- Python bytecode compilation
+- fixture-based and mocked `pytest` tests
+
+If you want to verify the live coupon endpoint against your own account, run a local-only smoke check:
+
+```bash
+python3 codex-rate-limit-reset/scripts/read_rate_limits.py --json
+```
+
+That live check is intentionally not run in GitHub Actions and does not require storing account credentials in the repository.
+
 ## Notes
 
 - Standard rate-limit windows come from the latest local Codex session snapshot.

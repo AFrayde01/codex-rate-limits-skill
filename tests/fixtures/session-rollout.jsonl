@@ -1,0 +1,3 @@
+{"type":"session_meta","payload":{"id":"thread-123"}}
+{"type":"event_msg","timestamp":"2026-06-20T04:00:00.000Z","payload":{"type":"token_count","rate_limits":{"limit_id":"codex","plan_type":"prolite","primary":{"used_percent":7.0,"window_minutes":300,"resets_at":1781946557},"secondary":{"used_percent":9.0,"window_minutes":10080,"resets_at":1782336229}}}}
+{"type":"event_msg","timestamp":"2026-06-20T04:05:00.000Z","payload":{"type":"token_count","rate_limits":{"limit_id":"codex","plan_type":"prolite","rate_limit_reached_type":"soft","primary":{"used_percent":8.0,"window_minutes":300,"resets_at":1781946557},"secondary":{"used_percent":10.0,"window_minutes":10080,"resets_at":1782336229}}}}
