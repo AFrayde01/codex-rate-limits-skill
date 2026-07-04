@@ -39,6 +39,13 @@ class Snapshot:
 LOCAL_COUPON_TTL_DAYS = 30
 LIVE_RESET_CREDITS_URL = "https://chatgpt.com/backend-api/wham/rate-limit-reset-credits"
 LIVE_RESET_CREDITS_TIMEOUT_SEC = 10
+CERTIFICATE_REMEDIATION = (
+    "HTTPS certificate verification failed before the live coupon endpoint could be "
+    "confirmed. TLS verification was kept enabled, so coupon expiry fell back to local "
+    "state only. Fix local Python trust by installing/updating certifi "
+    "(`python3 -m pip install --upgrade certifi`) or, for python.org macOS Python, "
+    "running its `Install Certificates.command`, then retry."
+)
 
 
 def parse_args() -> argparse.Namespace:
@@ -282,6 +289,36 @@ def build_ssl_context() -> ssl.SSLContext:
     return ssl.create_default_context()
 
 
+def is_certificate_verification_error(exc: BaseException) -> bool:
+    pending: list[BaseException] = [exc]
+    seen: set[int] = set()
+
+    while pending:
+        current = pending.pop()
+        if id(current) in seen:
+            continue
+        seen.add(id(current))
+
+        if isinstance(current, ssl.SSLCertVerificationError):
+            return True
+
+        reason = getattr(current, "reason", None)
+        if isinstance(reason, BaseException):
+            pending.append(reason)
+
+        for linked in (current.__cause__, current.__context__):
+            if isinstance(linked, BaseException):
+                pending.append(linked)
+
+    return "CERTIFICATE_VERIFY_FAILED" in str(exc)
+
+
+def describe_live_lookup_error(exc: BaseException) -> str:
+    if is_certificate_verification_error(exc):
+        return f"{CERTIFICATE_REMEDIATION} Original error: {exc}"
+    return str(exc)
+
+
 def resolve_auth_path(explicit_auth: str | None) -> Path:
     for path in build_auth_candidates(explicit_auth):
         if path.exists():
@@ -443,15 +480,17 @@ def read_reset_coupons(explicit_auth: str | None, tzinfo) -> dict[str, Any] | No
         json.JSONDecodeError,
         urllib.error.HTTPError,
         urllib.error.URLError,
+        ssl.SSLError,
         TimeoutError,
     ) as exc:
-        fallback = read_reset_coupon_state(tzinfo, fallback_reason=str(exc))
+        reason = describe_live_lookup_error(exc)
+        fallback = read_reset_coupon_state(tzinfo, fallback_reason=reason)
         if fallback is not None:
             return fallback
         return {
             "source": "unavailable",
             "source_description": "No live coupon data or local fallback metadata available",
-            "error": str(exc),
+            "error": reason,
         }
 
 
