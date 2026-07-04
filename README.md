@@ -46,6 +46,7 @@ Restart Codex if the skill does not appear immediately.
 
 - Python 3.10 or newer recommended
 - `certifi` is optional but helpful on some systems for HTTPS certificate trust when calling the live coupon endpoint
+- The script never disables TLS certificate verification. If local Python cannot verify HTTPS, live coupon lookup is skipped and local fallback coupon metadata is used instead.
 
 ## Usage
 
@@ -121,6 +122,26 @@ python3 codex-rate-limit-reset/scripts/read_rate_limits.py --json
 ```
 
 That live check is intentionally not run in GitHub Actions and does not require storing account credentials in the repository.
+
+## Troubleshooting
+
+### macOS certificate verification failure
+
+If the live coupon lookup reports:
+
+```text
+[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate
+```
+
+the local Python install cannot find a trusted CA bundle. The skill keeps TLS verification enabled and falls back to local Codex Desktop state, so coupon expiry is only an upper bound until the live endpoint succeeds.
+
+Fix one of these local trust-store paths, then retry:
+
+```bash
+python3 -m pip install --upgrade certifi
+```
+
+If you installed Python from python.org on macOS, you can also run the bundled `Install Certificates.command` from that Python install.
 
 ## Notes
 

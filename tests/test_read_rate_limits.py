@@ -135,6 +135,28 @@ def test_read_reset_coupons_falls_back_on_network_error(module, monkeypatch):
     assert "offline" in output["fallback_reason"]
 
 
+def test_read_reset_coupons_explains_certificate_verification_error(module, monkeypatch):
+    fixture_path = FIXTURES / "global-state.json"
+    cert_error = module.ssl.SSLCertVerificationError(
+        "certificate verify failed: unable to get local issuer certificate"
+    )
+    network_error = URLError(cert_error)
+    monkeypatch.setattr(
+        module,
+        "fetch_live_reset_coupons",
+        lambda explicit_auth, tzinfo: (_ for _ in ()).throw(network_error),
+    )
+    monkeypatch.setattr(module, "build_global_state_candidates", lambda: [fixture_path])
+
+    output = module.read_reset_coupons(None, UTC)
+
+    assert output is not None
+    assert output["source"] == "local_state_fallback"
+    assert "HTTPS certificate verification failed" in output["fallback_reason"]
+    assert "TLS verification was kept enabled" in output["fallback_reason"]
+    assert "python3 -m pip install --upgrade certifi" in output["fallback_reason"]
+
+
 def test_print_text_renders_live_coupon_summary(module, capsys):
     output = {
         "session_file": "/tmp/session.jsonl",
